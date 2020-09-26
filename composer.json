@@ -1,0 +1,38 @@
+{
+    "name": "seb/authenticator-bundle",
+    "description": "Symfony SebAuthenticatorBundle",
+    "keywords": [
+        "User authentication"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sebastiano Degan",
+            "email": "sebdeg87@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.1",
+        "ext-imap": "*",
+        "friendsofsymfony/user-bundle": "2.0.*"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "Seb\\AuthenticatorBundle\\": "src/"
+        },
+        "exclude-from-classmap": [
+            "/Tests/"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Seb\\AuthenticatorBundle\\Tests\\": "/Tests/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9"
+    }
+}
