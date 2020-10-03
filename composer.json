@@ -22,14 +22,11 @@
     "autoload": {
         "psr-4": {
             "Seb\\AuthenticatorBundle\\": "src/"
-        },
-        "exclude-from-classmap": [
-            "/Tests/"
-        ]
+        }
     },
     "autoload-dev": {
         "psr-4": {
-            "Seb\\AuthenticatorBundle\\Tests\\": "/Tests/"
+            "Seb\\AuthenticatorBundle\\Tests\\": "tests/"
         }
     },
     "require-dev": {
