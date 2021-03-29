@@ -35,16 +35,16 @@ class FormCredentialsProvider implements CredentialsProviderInterface
 
     public function getCredentials(Request $request)
     {
-        $credentials = [
-            'username' => $request->request->get($this->options['username_parameter']),
-            'password' => $request->request->get($this->options['password_parameter']),
-        ];
+        $credentials = new FormCredentials(
+            $request->request->get($this->options['username_parameter']),
+            $request->request->get($this->options['password_parameter'])
+        );
 
         $this->validateCsrfToken($request->request->get($this->options['csrf_parameter']));
 
         $request->getSession()->set(
             Security::LAST_USERNAME,
-            $credentials['username']
+            $credentials->getUsername()
         );
 
         return $credentials;

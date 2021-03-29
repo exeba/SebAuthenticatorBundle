@@ -2,11 +2,11 @@
 
 namespace Seb\AuthenticatorBundle\Security\Guard;
 
+use Seb\AuthenticatorBundle\Security\AuthenticatedTokenProviderInterface;
 use Seb\AuthenticatorBundle\Security\BadCredentialsPolicy;
 use Seb\AuthenticatorBundle\Security\CredentialsCheckerInterface;
 use Seb\AuthenticatorBundle\Security\CredentialsProviderInterface;
 use Seb\AuthenticatorBundle\Security\MissingUserPolicy;
-use Seb\AuthenticatorBundle\Security\AuthenticatedTokenProviderInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -59,7 +59,7 @@ class Authenticator implements AuthenticatorInterface
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
         try {
-            $user = $userProvider->loadUserByUsername($credentials['username']);
+            $user = $userProvider->loadUserByUsername($credentials->getUsername());
         } catch (UsernameNotFoundException $exception) {
             $user = $this->missingUserPolicy->userNotFound($credentials);
         }

@@ -17,6 +17,6 @@ class LocalCredentialsChecker implements CredentialsCheckerInterface
 
     public function checkCredentials($credentials, UserInterface $user)
     {
-        return $this->passwordEncoder->isPasswordValid($user, $credentials['password']);
+        return $this->passwordEncoder->isPasswordValid($user, $credentials->getPassword());
     }
 }

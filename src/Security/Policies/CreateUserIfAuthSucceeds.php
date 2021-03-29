@@ -2,7 +2,6 @@
 
 namespace Seb\AuthenticatorBundle\Security\Policies;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Seb\AuthenticatorBundle\Security\MissingUserPolicy;
 use Seb\AuthenticatorBundle\Security\UserManagerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;

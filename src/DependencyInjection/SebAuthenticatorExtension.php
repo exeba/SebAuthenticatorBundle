@@ -11,7 +11,6 @@ use Seb\AuthenticatorBundle\Security\Policies\CreateUserIfAuthSucceeds;
 use Seb\AuthenticatorBundle\Security\Policies\RedirectOnBadCredentials;
 use Seb\AuthenticatorBundle\Security\Policies\ThrowOnMissingUser;
 use Seb\AuthenticatorBundle\Security\Policies\TryNextOnBadCredentials;
-use Seb\AuthenticatorBundle\Utils\FOSUserManagerBridge;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\Extension;

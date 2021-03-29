@@ -16,7 +16,7 @@ class ImapCredentialsChecker implements CredentialsCheckerInterface
 
     public function checkCredentials($credentials, UserInterface $user)
     {
-        $mbox = @\imap_open($this->imapMailbox, $user->getUsername(), $credentials['password'], OP_HALFOPEN, 1);
+        $mbox = @\imap_open($this->imapMailbox, $user->getUsername(), $credentials->getPassword(), OP_HALFOPEN, 1);
         \imap_errors();
         \imap_alerts();
 
