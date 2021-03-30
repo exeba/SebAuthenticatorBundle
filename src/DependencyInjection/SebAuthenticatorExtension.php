@@ -9,6 +9,7 @@ use Seb\AuthenticatorBundle\Security\CredentialsProviders\FormCredentialsProvide
 use Seb\AuthenticatorBundle\Security\Guard\Authenticator;
 use Seb\AuthenticatorBundle\Security\Policies\CreateUserIfAuthSucceeds;
 use Seb\AuthenticatorBundle\Security\Policies\RedirectOnBadCredentials;
+use Seb\AuthenticatorBundle\Security\Policies\TargetPathOrHomePageRedirect;
 use Seb\AuthenticatorBundle\Security\Policies\ThrowOnMissingUser;
 use Seb\AuthenticatorBundle\Security\Policies\TryNextOnBadCredentials;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -37,7 +38,8 @@ class SebAuthenticatorExtension extends Extension
         $guard->setArgument(1, $this->credentialsCheckerDefinition($guardConfig));
         $guard->setArgument(2, $this->missingUserPolicyDefinition($guardConfig));
         $guard->setArgument(3, $this->badCredentialsPolicyDefinition($guardConfig));
-        $guard->setArgument(4, new Definition(SimpleAuthenticatedTokenProvider::class));
+        $guard->setArgument(4, $this->successfulAuthenticationPolicyDefinition($guardConfig));
+        $guard->setArgument(5, new Definition(SimpleAuthenticatedTokenProvider::class));
 
         return $guard;
     }
@@ -99,6 +101,14 @@ class SebAuthenticatorExtension extends Extension
 
             return $badCredentials;
         }
+    }
+
+    public function successfulAuthenticationPolicyDefinition(array $guardConfig)
+    {
+        $successfulAuthentication = new Definition(TargetPathOrHomePageRedirect::class);
+        $successfulAuthentication->setAutowired(true);
+
+        return $successfulAuthentication;
     }
 
     public function getAlias()
