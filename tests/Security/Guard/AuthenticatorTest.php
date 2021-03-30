@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Seb\AuthenticatorBundle\Security\Guard;
+namespace Seb\AuthenticatorBundle\Tests\Security\Guard;
 
 
 use PHPUnit\Framework\TestCase;
@@ -9,8 +9,12 @@ use Seb\AuthenticatorBundle\Security\AuthenticatedTokenProviderInterface;
 use Seb\AuthenticatorBundle\Security\BadCredentialsPolicy;
 use Seb\AuthenticatorBundle\Security\CredentialsCheckerInterface;
 use Seb\AuthenticatorBundle\Security\CredentialsProviderInterface;
+use Seb\AuthenticatorBundle\Security\Guard\Authenticator;
 use Seb\AuthenticatorBundle\Security\MissingUserPolicy;
+use Seb\AuthenticatorBundle\Security\SuccessfulAuthenticationPolicy;
+use Seb\AuthenticatorBundle\Tests\Security\Dummy\DummyCredentials;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -27,6 +31,7 @@ class AuthenticatorTest extends TestCase
     private $credentialsChecker;
     private $missingUserPolicy;
     private $badCredentialsPolicy;
+    private $succesfulAuthenticationPolicy;
     private $tokenProvider;
 
     private $authenticator;
@@ -38,6 +43,7 @@ class AuthenticatorTest extends TestCase
         $this->credentialsChecker = $this->createMock(CredentialsCheckerInterface::class);
         $this->missingUserPolicy = $this->createMock(MissingUserPolicy::class);
         $this->badCredentialsPolicy = $this->createMock(BadCredentialsPolicy::class);
+        $this->succesfulAuthenticationPolicy = $this->createMock(SuccessfulAuthenticationPolicy::class);
         $this->tokenProvider = $this->createMock(AuthenticatedTokenProviderInterface::class);
 
         $this->authenticator = new Authenticator(
@@ -45,6 +51,7 @@ class AuthenticatorTest extends TestCase
             $this->credentialsChecker,
             $this->missingUserPolicy,
             $this->badCredentialsPolicy,
+            $this->succesfulAuthenticationPolicy,
             $this->tokenProvider
         );
     }
@@ -104,7 +111,7 @@ class AuthenticatorTest extends TestCase
     public function testGetCredentialsSupportedRequest()
     {
         $supportedRequest = Request::create('/supported');
-        $dummyCredentials = ['user', 'pass'];
+        $dummyCredentials = new DummyCredentials('user');
 
         $this->credentialsProvider->method('supports')
                 ->willReturn(true);
@@ -134,11 +141,11 @@ class AuthenticatorTest extends TestCase
      */
     public function testGetExistingUser()
     {
-        $credentials = [ 'username' => 'existingUser' ];
+        $credentials = $dummyCredentials = new DummyCredentials('existingUser');
         $expectedUser = $this->createMock(UserInterface::class);
 
         $userProvider = $this->createMock(UserProviderInterface::class);
-        $userProvider->method('loadUserByUsername')->with($credentials['username'])->willReturn($expectedUser);
+        $userProvider->method('loadUserByUsername')->with($credentials->getUsername())->willReturn($expectedUser);
 
         $actualUser = $this->authenticator->getUser($credentials, $userProvider);
         $this->assertSame($expectedUser, $actualUser);
@@ -149,12 +156,12 @@ class AuthenticatorTest extends TestCase
      */
     public function testGetCreatedUser()
     {
-        $credentials = [ 'username' => 'existingUser' ];
+        $credentials = $dummyCredentials = new DummyCredentials('existingUser');
         $expectedUser = $this->createMock(UserInterface::class);
 
         $userProvider = $this->createMock(UserProviderInterface::class);
         $userProvider->method('loadUserByUsername')
-                ->with($credentials['username'])
+                ->with($credentials->getUsername())
                 ->willThrowException(new UsernameNotFoundException());
 
         $this->missingUserPolicy->method('userNotFound')
@@ -170,11 +177,11 @@ class AuthenticatorTest extends TestCase
      */
     public function testGetMissingUser()
     {
-        $credentials = [ 'username' => 'existingUser' ];
+        $credentials = $dummyCredentials = new DummyCredentials('missingUser');
 
         $userProvider = $this->createMock(UserProviderInterface::class);
         $userProvider->method('loadUserByUsername')
-            ->with($credentials['username'])
+            ->with($credentials->getUsername())
             ->willThrowException(new UsernameNotFoundException());
 
         $this->missingUserPolicy->method('userNotFound')
@@ -190,7 +197,7 @@ class AuthenticatorTest extends TestCase
      */
     public function testCheckCredentials()
     {
-        $credentials = [ 'user', 'pass' ];
+        $credentials = $dummyCredentials = new DummyCredentials('username');
         $user = $this->createMock(UserInterface::class);
 
         $this->credentialsChecker->expects($this->once())
@@ -222,6 +229,22 @@ class AuthenticatorTest extends TestCase
 
         $actualToken = $this->authenticator->createAuthenticatedToken($user, $providerKey);
         $this->assertEquals($expectedToken, $actualToken);
+    }
+
+    /**
+     * @covers ::onAuthenticationSuccess
+     */
+    public function testOnAuthenticationSuccess()
+    {
+        $request = Request::create('/dummy_path');
+        $token = $this->createMock(TokenInterface::class);
+        $provider = 'dummy_provider';
+
+        $this->succesfulAuthenticationPolicy->expects($this->once())
+            ->method('onAuthenticationSuccess')
+            ->with($request, $token, $provider);
+
+        $this->authenticator->onAuthenticationSuccess($request, $token, $provider);
     }
 
     /**

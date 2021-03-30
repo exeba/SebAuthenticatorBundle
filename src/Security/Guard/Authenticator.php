@@ -7,7 +7,7 @@ use Seb\AuthenticatorBundle\Security\BadCredentialsPolicy;
 use Seb\AuthenticatorBundle\Security\CredentialsCheckerInterface;
 use Seb\AuthenticatorBundle\Security\CredentialsProviderInterface;
 use Seb\AuthenticatorBundle\Security\MissingUserPolicy;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use Seb\AuthenticatorBundle\Security\SuccessfulAuthenticationPolicy;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -25,6 +25,7 @@ class Authenticator implements AuthenticatorInterface
     private $credentialsChecker;
     private $missingUserPolicy;
     private $badCredentialsPolicy;
+    private $successfulAuthenticationPolicy;
     private $authenticatedTokenProvider;
 
     public function __construct(
@@ -32,12 +33,14 @@ class Authenticator implements AuthenticatorInterface
         CredentialsCheckerInterface $credentialsChecker,
         MissingUserPolicy $missingUserPolicy,
         BadCredentialsPolicy $badCredentialsPolicy,
+        SuccessfulAuthenticationPolicy $successfulAuthenticationPolicy,
         AuthenticatedTokenProviderInterface $authenticatedTokenProvider
     ) {
         $this->credentialsProvider = $credentialsProvider;
         $this->credentialsChecker = $credentialsChecker;
         $this->missingUserPolicy = $missingUserPolicy;
         $this->badCredentialsPolicy = $badCredentialsPolicy;
+        $this->successfulAuthenticationPolicy = $successfulAuthenticationPolicy;
         $this->authenticatedTokenProvider = $authenticatedTokenProvider;
     }
 
@@ -81,9 +84,7 @@ class Authenticator implements AuthenticatorInterface
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        $targetPath = $this->getTargetPath($request->getSession(), $providerKey);
-
-        return new RedirectResponse($targetPath);
+        return $this->successfulAuthenticationPolicy->onAuthenticationSuccess($request, $token, $providerKey);
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)

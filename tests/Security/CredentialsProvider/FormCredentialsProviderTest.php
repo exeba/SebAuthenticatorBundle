@@ -1,14 +1,14 @@
 <?php
 
 
-namespace Security\CredentialsProvider;
+namespace Seb\AuthenticatorBundle\Tests\Security\CredentialsProvider;
 
 
 use PHPUnit\Framework\TestCase;
+use Seb\AuthenticatorBundle\Security\CredentialsProviders\FormCredentials;
 use Seb\AuthenticatorBundle\Security\CredentialsProviders\FormCredentialsProvider;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
@@ -79,10 +79,7 @@ class FormCredentialsProviderTest extends TestCase
         $session = $this->createMock(SessionInterface::class);
         $request->setSession($session);
 
-        $expectedCredentials = [
-            'username' => 'test_user',
-            'password' => 'test_pass',
-        ];
+        $expectedCredentials = new FormCredentials('test_user', 'test_pass');
 
         $this->csrfTokenVerifier->method('isTokenValid')->willReturn(true);
 
