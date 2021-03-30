@@ -16,7 +16,7 @@ class TargetPathOrHomePageRedirect implements SuccessfulAuthenticationPolicy
     private $httpUtils;
     private $homePagePath;
 
-    public function __constructor(HttpUtils $httpUtils, $homePagePath = 'homepage')
+    public function __construct(HttpUtils $httpUtils, $homePagePath = 'homepage')
     {
         $this->httpUtils = $httpUtils;
         $this->homePagePath = $homePagePath;
