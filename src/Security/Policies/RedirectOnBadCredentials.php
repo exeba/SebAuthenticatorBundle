@@ -3,21 +3,20 @@
 namespace Seb\AuthenticatorBundle\Security\Policies;
 
 use Seb\AuthenticatorBundle\Security\BadCredentialsPolicy;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Http\HttpUtils;
 
 class RedirectOnBadCredentials implements BadCredentialsPolicy
 {
     public $redirectRoute;
-    public $urlGenerator;
+    public $httpUtils;
 
-    public function __construct($redirectRoute, UrlGeneratorInterface $urlGenerator)
+    public function __construct($redirectRoute, HttpUtils $httpUtils)
     {
         $this->redirectRoute = $redirectRoute;
-        $this->urlGenerator = $urlGenerator;
+        $this->httpUtils = $httpUtils;
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
@@ -26,15 +25,6 @@ class RedirectOnBadCredentials implements BadCredentialsPolicy
             $request->getSession()->set(Security::AUTHENTICATION_ERROR, $exception);
         }
 
-        return new RedirectResponse($this->buildRedirectUrl());
-    }
-
-    private function buildRedirectUrl()
-    {
-        if ('/' === $this->redirectRoute[0]) {
-            return $this->redirectRoute;
-        } else {
-            return $this->urlGenerator->generate($this->redirectRoute);
-        }
+        return $this->httpUtils->createRedirectResponse($request, $this->redirectRoute);
     }
 }
