@@ -9,8 +9,14 @@ class Configuration implements ConfigurationInterface
 {
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('cfh_authenticator');
+        if (method_exists(TreeBuilder::class, 'getRootNode')) {
+            $treeBuilder = new TreeBuilder('seb_authenticator');
+            $rootNode = $treeBuilder->getRootNode();
+        } else {
+            // Deprecated in Symfony 4.2
+            $treeBuilder = new TreeBuilder();
+            $rootNode = $treeBuilder->root('seb_authenticator');
+        }
 
         $rootNode
             ->children()
