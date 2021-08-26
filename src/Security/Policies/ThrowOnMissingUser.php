@@ -10,7 +10,7 @@ class ThrowOnMissingUser implements MissingUserPolicy
 {
     public function userNotFound($credentials)
     {
-        throw new UsernameNotFoundException($credentials['username']);
+        throw new UsernameNotFoundException($credentials->getUsername());
     }
 
     public function successfulAuthentication(UserInterface $user)
