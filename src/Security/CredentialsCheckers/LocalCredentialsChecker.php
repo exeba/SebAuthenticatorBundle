@@ -3,20 +3,25 @@
 namespace Seb\AuthenticatorBundle\Security\CredentialsCheckers;
 
 use Seb\AuthenticatorBundle\Security\CredentialsCheckerInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 class LocalCredentialsChecker implements CredentialsCheckerInterface
 {
     private $passwordEncoder;
 
-    public function __construct(UserPasswordEncoderInterface $passwordEncoder)
+    public function __construct(UserPasswordHasherInterface $passwordEncoder)
     {
         $this->passwordEncoder = $passwordEncoder;
     }
 
     public function checkCredentials($credentials, UserInterface $user)
     {
-        return $this->passwordEncoder->isPasswordValid($user, $credentials->getPassword());
+        if ($user instanceof PasswordAuthenticatedUserInterface) {
+            return $this->passwordEncoder->isPasswordValid($user, $credentials->getPassword());
+        }
+
+        return false;
     }
 }
