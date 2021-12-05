@@ -1,6 +1,6 @@
 <?php
 
-namespace Seb\AuthenticatorBundle\Security\Authenticator;
+namespace Seb\AuthenticatorBundle\Security\AuthenticatedTokenProviders;
 
 use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 

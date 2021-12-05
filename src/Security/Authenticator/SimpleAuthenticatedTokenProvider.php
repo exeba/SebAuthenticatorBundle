@@ -2,6 +2,7 @@
 
 namespace Seb\AuthenticatorBundle\Security\Authenticator;
 
+use Seb\AuthenticatorBundle\Security\AuthenticatedTokenProviders\AuthenticatedToken;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 
 class SimpleAuthenticatedTokenProvider implements AuthenticatedTokenProviderInterface
