@@ -81,6 +81,6 @@ class Authenticator implements AuthenticatorInterface, AuthenticationEntryPointI
 
     public function start(Request $request, AuthenticationException $authException = null)
     {
-        $this->credentialsProvider->start($request, $authException);
+        return $this->credentialsProvider->start($request, $authException);
     }
 }
