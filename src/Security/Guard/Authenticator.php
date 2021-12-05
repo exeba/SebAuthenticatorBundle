@@ -75,14 +75,14 @@ class Authenticator implements AuthenticatorInterface
         return $this->credentialsChecker->checkCredentials($credentials, $user);
     }
 
-    public function createAuthenticatedToken(UserInterface $user, $providerKey)
+    public function createAuthenticatedToken(UserInterface $user, string $providerKey)
     {
         $this->missingUserPolicy->successfulAuthentication($user);
 
         return $this->authenticatedTokenProvider->createAuthenticatedToken($user, $providerKey);
     }
 
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $providerKey)
     {
         return $this->successfulAuthenticationPolicy->onAuthenticationSuccess($request, $token, $providerKey);
     }
