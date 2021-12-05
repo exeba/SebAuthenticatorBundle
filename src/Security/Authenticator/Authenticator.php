@@ -14,8 +14,9 @@ use Symfony\Component\Security\Http\Authenticator\AuthenticatorInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\RememberMeBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\PassportInterface;
+use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
 
-class Authenticator implements AuthenticatorInterface
+class Authenticator implements AuthenticatorInterface, AuthenticationEntryPointInterface
 {
 
     private $credentialsProvider;
@@ -76,5 +77,10 @@ class Authenticator implements AuthenticatorInterface
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         return $this->badCredentialsPolicy->onAuthenticationFailure($request, $exception);
+    }
+
+    public function start(Request $request, AuthenticationException $authException = null)
+    {
+        $this->credentialsProvider->start($request, $authException);
     }
 }

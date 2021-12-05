@@ -5,6 +5,7 @@ namespace Seb\AuthenticatorBundle\Security\Authenticator;
 
 use Seb\AuthenticatorBundle\Security\CredentialsCheckerInterface;
 use Seb\AuthenticatorBundle\Security\MissingUserPolicy;
+use Seb\AuthenticatorBundle\Security\PassportProviderInterface;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -13,7 +14,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\CredentialsInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 
-class PassportProvider
+class PassportProvider implements PassportProviderInterface
 {
 
     private $userProvider;
