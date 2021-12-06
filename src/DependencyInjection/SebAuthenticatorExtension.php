@@ -2,11 +2,13 @@
 
 namespace Seb\AuthenticatorBundle\DependencyInjection;
 
-use Seb\AuthenticatorBundle\Security\AuthenticatedTokenProviders\SimpleAuthenticatedTokenProvider;
-use Seb\AuthenticatorBundle\Security\CredentialsCheckers\ImapCredentialsChecker;
+use Seb\AuthenticatorBundle\Security\AuthenticatedTokenProviders\SimpleAuthenticatedTokenProvider as GuardAuthenticatedTokenProvider;
+use Seb\AuthenticatorBundle\Security\Authenticator\Authenticator;
+use Seb\AuthenticatorBundle\Security\Authenticator\PassportProvider;
+use Seb\AuthenticatorBundle\Security\Authenticator\SimpleAuthenticatedTokenProvider;
 use Seb\AuthenticatorBundle\Security\CredentialsCheckers\LocalCredentialsChecker;
 use Seb\AuthenticatorBundle\Security\CredentialsProviders\FormCredentialsProvider;
-use Seb\AuthenticatorBundle\Security\Guard\Authenticator;
+use Seb\AuthenticatorBundle\Security\Guard\Authenticator as GuardAuthenticator;
 use Seb\AuthenticatorBundle\Security\Policies\CreateUserIfAuthSucceeds;
 use Seb\AuthenticatorBundle\Security\Policies\RedirectOnBadCredentials;
 use Seb\AuthenticatorBundle\Security\Policies\TargetPathOrHomePageRedirect;
@@ -29,19 +31,47 @@ class SebAuthenticatorExtension extends Extension
             $definition = $this->formGuard($guardConfig);
             $container->setDefinition("seb_authenticator.guards.$guardName", $definition);
         }
+
+        foreach ($config['authenticators'] as $authenticatorName => $authenticatorConfig) {
+            $definition = $this->formGuard($authenticatorConfig);
+            $container->setDefinition("seb_authenticator.authenticators.$authenticatorName", $definition);
+        }
     }
 
     public function formGuard(array $guardConfig)
     {
-        $guard = new Definition(Authenticator::class);
+        $guard = new Definition(GuardAuthenticator::class);
         $guard->setArgument(0, $this->credentialsProviderDefinition($guardConfig));
         $guard->setArgument(1, $this->credentialsCheckerDefinition($guardConfig));
         $guard->setArgument(2, $this->missingUserPolicyDefinition($guardConfig));
         $guard->setArgument(3, $this->badCredentialsPolicyDefinition($guardConfig));
         $guard->setArgument(4, $this->successfulAuthenticationPolicyDefinition($guardConfig));
-        $guard->setArgument(5, new Definition(SimpleAuthenticatedTokenProvider::class));
+        $guard->setArgument(5, new Definition(GuardAuthenticatedTokenProvider::class));
 
         return $guard;
+    }
+
+
+    public function formAuthenticator(array $authenticatorConfig)
+    {
+        $authenticator = new Definition(Authenticator::class);
+        $authenticator->setArgument(0, $this->credentialsProviderDefinition($authenticatorConfig));
+        $authenticator->setArgument(1, $this->passportProviderDefinition($authenticatorConfig));
+        $authenticator->setArgument(2, new Definition(SimpleAuthenticatedTokenProvider::class));
+        $authenticator->setArgument(3, $this->badCredentialsPolicyDefinition($authenticatorConfig));
+        $authenticator->setArgument(4, $this->successfulAuthenticationPolicyDefinition($authenticatorConfig));
+
+        return $authenticator;
+    }
+
+    public function passportProviderDefinition(array $guardConfig)
+    {
+        $passportProvider = new Definition(PassportProvider::class);
+        $passportProvider->setAutowired(true);
+        $passportProvider->setArgument(1, $this->credentialsCheckerDefinition($guardConfig));
+        $passportProvider->setArgument(2, $this->missingUserPolicyDefinition($guardConfig));
+
+        return $passportProvider;
     }
 
     public function credentialsProviderDefinition(array $guardConfig)
