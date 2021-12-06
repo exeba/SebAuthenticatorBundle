@@ -11,4 +11,10 @@ class AuthenticatedToken extends PreAuthenticatedToken
     {
         parent::__construct($user, $firewallName, $roles);
     }
+
+    public function isAuthenticated()
+    {
+        return true;
+    }
+
 }
