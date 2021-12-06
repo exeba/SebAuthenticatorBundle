@@ -2,7 +2,6 @@
 
 namespace Seb\AuthenticatorBundle\Security\Authenticator;
 
-
 use Seb\AuthenticatorBundle\Security\CredentialsCheckerInterface;
 use Seb\AuthenticatorBundle\Security\MissingUserPolicy;
 use Seb\AuthenticatorBundle\Security\PassportProviderInterface;
@@ -16,7 +15,6 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 
 class PassportProvider implements PassportProviderInterface
 {
-
     private $userProvider;
     private $credentialsChecker;
     private $missingUserPolicy;
@@ -49,8 +47,9 @@ class PassportProvider implements PassportProviderInterface
         return new Passport($userBadge, $credentials);
     }
 
-    private function createUserBadge(UserInterface $user) {
-        return new UserBadge($user->getUserIdentifier(),  function () use ($user) { return $user; });
+    private function createUserBadge(UserInterface $user)
+    {
+        return new UserBadge($user->getUserIdentifier(), function () use ($user) { return $user; });
     }
 
     private function loadUser(CredentialsInterface $credentials)
@@ -61,5 +60,4 @@ class PassportProvider implements PassportProviderInterface
             return $this->missingUserPolicy->userNotFound($credentials);
         }
     }
-
 }

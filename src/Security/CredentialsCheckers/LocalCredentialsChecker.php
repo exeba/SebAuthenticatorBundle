@@ -4,8 +4,8 @@ namespace Seb\AuthenticatorBundle\Security\CredentialsCheckers;
 
 use Seb\AuthenticatorBundle\Security\CredentialsCheckerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class LocalCredentialsChecker implements CredentialsCheckerInterface
 {

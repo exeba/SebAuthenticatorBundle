@@ -18,7 +18,6 @@ use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface
 
 class Authenticator implements AuthenticatorInterface, AuthenticationEntryPointInterface
 {
-
     private $credentialsProvider;
     private $passportProvider;
     private $authenticatedTokenProvider;
@@ -26,11 +25,11 @@ class Authenticator implements AuthenticatorInterface, AuthenticationEntryPointI
     private $badCredentialsPolicy;
 
     public function __construct(
-        CredentialsProviderInterface        $credentialsProvider,
-        PassportProviderInterface           $passportProvider,
+        CredentialsProviderInterface $credentialsProvider,
+        PassportProviderInterface $passportProvider,
         AuthenticatedTokenProviderInterface $authenticatedTokenProvider,
-        SuccessfulAuthenticationPolicy      $successfulAuthenticationPolicy,
-        BadCredentialsPolicy                $badCredentialsPolicy)
+        SuccessfulAuthenticationPolicy $successfulAuthenticationPolicy,
+        BadCredentialsPolicy $badCredentialsPolicy)
     {
         $this->credentialsProvider = $credentialsProvider;
         $this->passportProvider = $passportProvider;
