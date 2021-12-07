@@ -54,8 +54,12 @@ class PassportProvider implements PassportProviderInterface
 
     private function loadUser(CredentialsInterface $credentials)
     {
+        if (! ($credentials instanceof \Seb\AuthenticatorBundle\Security\CredentialsInterface)) {
+            return $this->missingUserPolicy->userNotFound($credentials);
+        }
+
         try {
-            return $this->userProvider->loadUserByIdentifier($credentials->getIdentifier());
+            return $this->userProvider->loadUserByIdentifier($credentials->getUsername());
         } catch (UserNotFoundException $e) {
             return $this->missingUserPolicy->userNotFound($credentials);
         }

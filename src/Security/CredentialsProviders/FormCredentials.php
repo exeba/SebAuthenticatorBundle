@@ -3,16 +3,16 @@
 namespace Seb\AuthenticatorBundle\Security\CredentialsProviders;
 
 use Seb\AuthenticatorBundle\Security\CredentialsInterface;
+use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordCredentials;
 
-class FormCredentials implements CredentialsInterface
+class FormCredentials extends PasswordCredentials implements CredentialsInterface
 {
     private $username;
-    private $password;
 
     public function __construct($username, $password)
     {
+        parent::__construct($password);
         $this->username = $username;
-        $this->password = $password;
     }
 
     public function getUsername()
@@ -20,8 +20,4 @@ class FormCredentials implements CredentialsInterface
         return $this->username;
     }
 
-    public function getPassword()
-    {
-        return $this->password;
-    }
 }

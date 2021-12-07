@@ -6,6 +6,7 @@ use Seb\AuthenticatorBundle\Security\CredentialsCheckerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordCredentials;
 
 class LocalCredentialsChecker implements CredentialsCheckerInterface
 {
@@ -18,10 +19,15 @@ class LocalCredentialsChecker implements CredentialsCheckerInterface
 
     public function checkCredentials($credentials, UserInterface $user)
     {
-        if ($user instanceof PasswordAuthenticatedUserInterface) {
-            return $this->passwordEncoder->isPasswordValid($user, $credentials->getPassword());
+        if (!(($user instanceof PasswordAuthenticatedUserInterface) && ($credentials instanceof PasswordCredentials))) {
+            return false;
         }
 
-        return false;
+        $valid = $this->passwordEncoder->isPasswordValid($user, $credentials->getPassword());
+        if ($valid) {
+            $credentials->markResolved();
+        }
+
+        return $valid;
     }
 }
