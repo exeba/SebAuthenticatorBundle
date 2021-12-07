@@ -19,5 +19,4 @@ class FormCredentials extends PasswordCredentials implements CredentialsInterfac
     {
         return $this->username;
     }
-
 }
