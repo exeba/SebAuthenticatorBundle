@@ -17,6 +17,7 @@ use Seb\AuthenticatorBundle\Security\Policies\TryNextOnBadCredentials;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\Extension;
+use Symfony\Component\DependencyInjection\Reference;
 
 class SebAuthenticatorExtension extends Extension
 {
@@ -33,7 +34,7 @@ class SebAuthenticatorExtension extends Extension
         }
 
         foreach ($config['authenticators'] as $authenticatorName => $authenticatorConfig) {
-            $definition = $this->formGuard($authenticatorConfig);
+            $definition = $this->formAuthenticator($authenticatorConfig);
             $container->setDefinition("seb_authenticator.authenticators.$authenticatorName", $definition);
         }
     }
@@ -51,25 +52,29 @@ class SebAuthenticatorExtension extends Extension
         return $guard;
     }
 
-
     public function formAuthenticator(array $authenticatorConfig)
     {
         $authenticator = new Definition(Authenticator::class);
         $authenticator->setArgument(0, $this->credentialsProviderDefinition($authenticatorConfig));
         $authenticator->setArgument(1, $this->passportProviderDefinition($authenticatorConfig));
         $authenticator->setArgument(2, new Definition(SimpleAuthenticatedTokenProvider::class));
-        $authenticator->setArgument(3, $this->badCredentialsPolicyDefinition($authenticatorConfig));
-        $authenticator->setArgument(4, $this->successfulAuthenticationPolicyDefinition($authenticatorConfig));
+        $authenticator->setArgument(3, $this->successfulAuthenticationPolicyDefinition($authenticatorConfig));
+        $authenticator->setArgument(4, $this->badCredentialsPolicyDefinition($authenticatorConfig));
 
         return $authenticator;
     }
 
-    public function passportProviderDefinition(array $guardConfig)
+    public function passportProviderDefinition(array $authenticatorConfig)
     {
         $passportProvider = new Definition(PassportProvider::class);
-        $passportProvider->setAutowired(true);
-        $passportProvider->setArgument(1, $this->credentialsCheckerDefinition($guardConfig));
-        $passportProvider->setArgument(2, $this->missingUserPolicyDefinition($guardConfig));
+        // FIXME: This parameter is probably useless, is shoul be possible to get it from firewall config
+        if (array_key_exists('user_provider', $authenticatorConfig)) {
+            $passportProvider->setArgument(0, new Reference("security.user.provider.concrete.{$authenticatorConfig['user_provider']}"));
+        } else {
+            $passportProvider->setAutowired(true);
+        }
+        $passportProvider->setArgument(1, $this->credentialsCheckerDefinition($authenticatorConfig));
+        $passportProvider->setArgument(2, $this->missingUserPolicyDefinition($authenticatorConfig));
 
         return $passportProvider;
     }
@@ -92,13 +97,6 @@ class SebAuthenticatorExtension extends Extension
         if (array_key_exists('local_credentials', $guardConfig)) {
             $checker = new Definition(LocalCredentialsChecker::class);
             $checker->setAutowired(true);
-
-            return $checker;
-        }
-
-        if (array_key_exists('imap_credentials', $guardConfig)) {
-            $checker = new Definition(ImapCredentialsChecker::class);
-            $checker->setArgument(0, $guardConfig['imap_credentials']['mailbox']);
 
             return $checker;
         }
