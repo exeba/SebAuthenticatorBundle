@@ -139,8 +139,4 @@ class SebAuthenticatorExtension extends Extension
         return $successfulAuthentication;
     }
 
-    public function getAlias()
-    {
-        return 'seb_authenticator';
-    }
 }

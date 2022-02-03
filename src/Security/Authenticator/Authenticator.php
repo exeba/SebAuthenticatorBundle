@@ -78,7 +78,7 @@ class Authenticator implements AuthenticatorInterface, AuthenticationEntryPointI
         return $this->badCredentialsPolicy->onAuthenticationFailure($request, $exception);
     }
 
-    public function start(Request $request, AuthenticationException $authException = null)
+    public function start(Request $request, AuthenticationException $authException = null): Response
     {
         return $this->credentialsProvider->start($request, $authException);
     }
