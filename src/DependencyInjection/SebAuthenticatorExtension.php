@@ -138,5 +138,4 @@ class SebAuthenticatorExtension extends Extension
 
         return $successfulAuthentication;
     }
-
 }
