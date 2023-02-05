@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Seb\AuthenticatorBundle\Tests\Security\Guard;
-
 
 use PHPUnit\Framework\TestCase;
 use Seb\AuthenticatorBundle\Security\AuthenticatedTokenProviderInterface;
@@ -23,6 +21,7 @@ use Symfony\Component\Security\Guard\Token\PostAuthenticationGuardToken;
 
 /**
  * @coversDefaultClass \Seb\AuthenticatorBundle\Security\Guard\Authenticator
+ *
  * @covers ::__construct
  */
 class AuthenticatorTest extends TestCase
@@ -35,7 +34,6 @@ class AuthenticatorTest extends TestCase
     private $tokenProvider;
 
     private $authenticator;
-
 
     public function setUp(): void
     {
@@ -62,7 +60,7 @@ class AuthenticatorTest extends TestCase
     public function testStart()
     {
         $request = Request::create('/hello-world', 'GET');
-        $exception = new AuthenticationException("Exception!");
+        $exception = new AuthenticationException('Exception!');
 
         // 'start' method should simply forward che call
         $this->credentialsProvider
@@ -186,7 +184,7 @@ class AuthenticatorTest extends TestCase
 
         $this->missingUserPolicy->method('userNotFound')
             ->with($credentials)
-            ->willThrowException(new UsernameNotFoundException("really not found"));
+            ->willThrowException(new UsernameNotFoundException('really not found'));
 
         $this->expectException(UsernameNotFoundException::class);
         $this->authenticator->getUser($credentials, $userProvider);
@@ -213,10 +211,9 @@ class AuthenticatorTest extends TestCase
     public function testCreateAuthenticatedToken()
     {
         $providerKey = 'providerKey';
-        $roles = [ 'role1', 'role2' ];
+        $roles = ['role1', 'role2'];
         $user = $this->createMock(UserInterface::class);
         $user->method('getRoles')->willReturn($roles);
-
 
         $expectedToken = new PostAuthenticationGuardToken($user, $providerKey, $roles);
         $this->tokenProvider->expects($this->once())
@@ -253,7 +250,7 @@ class AuthenticatorTest extends TestCase
     public function testOnAuthenticationFailure()
     {
         $request = Request::create('/dummy_path');
-        $exception = new AuthenticationException("dummy exception");
+        $exception = new AuthenticationException('dummy exception');
 
         $this->badCredentialsPolicy->expects($this->once())
                 ->method('onAuthenticationFailure')
@@ -261,5 +258,4 @@ class AuthenticatorTest extends TestCase
 
         $this->authenticator->onAuthenticationFailure($request, $exception);
     }
-
 }

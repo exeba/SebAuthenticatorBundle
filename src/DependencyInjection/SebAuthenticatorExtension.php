@@ -84,7 +84,7 @@ class SebAuthenticatorExtension extends Extension
         if (array_key_exists('form_login', $guardConfig)) {
             $credentials = new Definition(FormCredentialsProvider::class);
             $credentials->setAutowired(true);
-            $credentials->setArgument(1, $guardConfig['form_login'] ?? []);
+            $credentials->setArgument(2, $guardConfig['form_login'] ?? []);
 
             return $credentials;
         }

@@ -3,17 +3,18 @@
 namespace Seb\AuthenticatorBundle\Security\CredentialsProviders;
 
 use Seb\AuthenticatorBundle\Security\CredentialsProviderInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use Symfony\Component\Security\Http\HttpUtils;
 
 class FormCredentialsProvider implements CredentialsProviderInterface
 {
     private $csrfTokenManager;
+    private $httpUtils;
     private $options = [
         'username_parameter' => '_username',
         'password_parameter' => '_password',
@@ -22,15 +23,23 @@ class FormCredentialsProvider implements CredentialsProviderInterface
         'login_check_path' => '/login_check',
     ];
 
-    public function __construct(CsrfTokenManagerInterface $csrfTokenManager, $options)
+    public function __construct(
+        CsrfTokenManagerInterface $csrfTokenManager,
+        HttpUtils $httpUtils,
+        $options)
     {
         $this->csrfTokenManager = $csrfTokenManager;
+        $this->httpUtils = $httpUtils;
         $this->options = array_merge($this->options, $options);
     }
 
     public function supports(Request $request)
     {
-        return $this->options['login_check_path'] === $request->getPathInfo() && $request->isMethod('POST');
+        if ($request->isMethod('POST')) {
+            return $this->httpUtils->checkRequestPath($request, $this->options['login_check_path']);
+        }
+
+        return false;
     }
 
     public function getCredentials(Request $request)
@@ -65,6 +74,6 @@ class FormCredentialsProvider implements CredentialsProviderInterface
 
     public function start(Request $request, AuthenticationException $authException = null)
     {
-        return new RedirectResponse($this->options['login_path']);
+        return $this->httpUtils->createRedirectResponse($request, $this->options['login_path']);
     }
 }

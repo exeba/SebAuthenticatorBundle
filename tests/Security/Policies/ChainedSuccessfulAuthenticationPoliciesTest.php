@@ -11,7 +11,6 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class ChainedSuccessfulAuthenticationPoliciesTest extends TestCase
 {
-
     private $firstMockPolicy;
     private $secondMockPolicy;
 
@@ -68,7 +67,6 @@ class ChainedSuccessfulAuthenticationPoliciesTest extends TestCase
             ->with($this->testRequest, $this->testTokenInterface, $this->testProvider)
             ->willReturn(null);
 
-
         $this->secondMockPolicy->method('onAuthenticationSuccess')
             ->with($this->testRequest, $this->testTokenInterface, $this->testProvider)
             ->willReturn($expectedResponse);
@@ -97,5 +95,4 @@ class ChainedSuccessfulAuthenticationPoliciesTest extends TestCase
 
         $this->assertSame($expectedResponse, $response);
     }
-
 }
