@@ -5,5 +5,4 @@ The AuthenticatorInterface has been split into sub interfaces, allowing to mix a
 
 ## Examples
 
-At the moment there is no documentation, but you can take a loot at https://github.com/exeba/wallabag/tree/imap-auth
-where it is used to allow login both from local accounts and imap accounts
+At the moment there is no documentation, but you can take a loot at https://github.com/exeba/symfony-auth-examples.
