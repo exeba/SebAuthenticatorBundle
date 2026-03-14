@@ -13,7 +13,7 @@
     ],
     "require": {
         "php": "^7.1 | ^8.0",
-        "symfony/security-bundle": ">=5.3"
+        "symfony/security-bundle": ">=6.2"
     },
     "config": {
         "sort-packages": true

@@ -11,16 +11,10 @@ class Configuration implements ConfigurationInterface
     /**
      * @return TreeBuilder
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
-        if (method_exists(TreeBuilder::class, 'getRootNode')) {
-            $treeBuilder = new TreeBuilder('seb_authenticator');
-            $rootNode = $treeBuilder->getRootNode();
-        } else {
-            // Deprecated in Symfony 4.2
-            $treeBuilder = new TreeBuilder();
-            $rootNode = $treeBuilder->root('seb_authenticator');
-        }
+        $treeBuilder = new TreeBuilder('seb_authenticator');
+        $rootNode = $treeBuilder->getRootNode();
 
         $config = $rootNode->children()
             ->scalarNode('login_page')->defaultValue('/login')->end();

@@ -10,6 +10,7 @@ use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Http\HttpUtils;
+use Symfony\Component\Security\Http\SecurityRequestAttributes;
 
 class FormCredentialsProvider implements CredentialsProviderInterface
 {
@@ -52,7 +53,7 @@ class FormCredentialsProvider implements CredentialsProviderInterface
         $this->validateCsrfToken($request->request->get($this->options['csrf_parameter']));
 
         $request->getSession()->set(
-            Security::LAST_USERNAME,
+            SecurityRequestAttributes::LAST_USERNAME,
             $credentials->getUsername()
         );
 
