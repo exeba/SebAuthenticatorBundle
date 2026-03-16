@@ -13,5 +13,5 @@ interface CredentialsProviderInterface
 
     public function supportsRememberMe();
 
-    public function start(Request $request, AuthenticationException $authException = null);
+    public function start(Request $request, ?AuthenticationException $authException = null);
 }

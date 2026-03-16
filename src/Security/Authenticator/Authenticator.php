@@ -13,7 +13,6 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\AuthenticatorInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\RememberMeBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
-use Symfony\Component\Security\Http\Authenticator\Passport\PassportInterface;
 use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
 
 class Authenticator implements AuthenticatorInterface, AuthenticationEntryPointInterface
@@ -54,13 +53,9 @@ class Authenticator implements AuthenticatorInterface, AuthenticationEntryPointI
         return $passport;
     }
 
-    public function createAuthenticatedToken(PassportInterface $passport, string $firewallName): TokenInterface
+    public function createAuthenticatedToken(Passport $passport, string $firewallName): TokenInterface
     {
-        if ($passport instanceof Passport) {
-            return $this->createToken($passport, $firewallName);
-        }
-
-        throw new AuthenticationException('Unsupported passport class: '.get_class($passport));
+        return $this->createToken($passport, $firewallName);
     }
 
     public function createToken(Passport $passport, string $firewallName): TokenInterface
@@ -78,7 +73,7 @@ class Authenticator implements AuthenticatorInterface, AuthenticationEntryPointI
         return $this->badCredentialsPolicy->onAuthenticationFailure($request, $exception);
     }
 
-    public function start(Request $request, AuthenticationException $authException = null): Response
+    public function start(Request $request, ?AuthenticationException $authException = null): Response
     {
         return $this->credentialsProvider->start($request, $authException);
     }
