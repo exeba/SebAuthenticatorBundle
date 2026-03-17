@@ -6,7 +6,6 @@ use Seb\AuthenticatorBundle\Security\CredentialsProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
-use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Http\HttpUtils;
@@ -73,7 +72,7 @@ class FormCredentialsProvider implements CredentialsProviderInterface
         return true;
     }
 
-    public function start(Request $request, AuthenticationException $authException = null)
+    public function start(Request $request, ?AuthenticationException $authException = null)
     {
         return $this->httpUtils->createRedirectResponse($request, $this->options['login_path']);
     }
